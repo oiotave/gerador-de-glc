@@ -2,8 +2,8 @@
 
 Esse projeto foi feito pelos discentes:
 
-# Davi de Lacerda Teixeira
-# João Victor Fernandes da Silveira
+### Davi de Lacerda Teixeira
+### João Victor Fernandes da Silveira
 
 Seu objetivo é promover a geração de cadeias em uma gramática livre de contexto, fornecendo dois modos de produção:
 
