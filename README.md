@@ -12,6 +12,11 @@ Seu objetivo é executar a geração de cadeias em uma gramática livre de conte
 * Detalhado: usuário escolhe as derivações até a finalização da cadeia
 * Rápido: gera sempre uma cadeia toda vez que o usuário solicita
 
+Além da função principal "main", o projeto possui duas bibliotecas auxiliares:
+
+* structs.h: responsável por armazenar estruturas essenciais da gramática e tratá-las
+* erros.h: responsável pela checagem de erros na gramática passada
+
 Para a compilação do código, sobretudo se for por meio do compilador GCC, recomenda-se o seguinte comando:
 
     gcc -o app structs.c erros.c main.c
