@@ -19,17 +19,10 @@ typedef struct tTerminais Terminais;
 
 // Lista encadeada para guardar cada uma das producoes da gramatica
 struct tProducoes {
-    // Armazena a producao
-    char producao[20];
-
-    // Armazena a variavel que gera a producao
-    char variavel;
-
-    // Flag que determina se a producao leva a loops
-    int estadoArmadilha;
-
-    // Ponteiro para o proximo elemento
-    struct tProducoes *proximo;
+    char producao[20];          // Armazena a producao
+    char variavel;              // Armazena a variavel que gera a producao
+    int estadoArmadilha;        // Flag que determina se a producao leva a loops
+    struct tProducoes *proximo; // Ponteiro para o proximo elemento
 };
 
 typedef struct tProducoes Producoes;
@@ -39,7 +32,7 @@ struct tGramatica {
     Variaveis variaveis;
     Terminais terminais;
     Producoes *producoes;
-    char inicial;   // Armazena a variavel inicial da gramatica
+    char inicial; // Armazena a variavel inicial da gramatica
 };
 
 typedef struct tGramatica Gramatica;
