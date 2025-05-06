@@ -12,34 +12,28 @@ int verifica_arquivo(Gramatica *gramatica) {
         printf("\033[31m\nNao ha variaveis para serem lidas!\033[0m\n");
         flag = 1;
     }
-
     // Verifica se ha variavel inicial.
-    if(gramatica->inicial == '\0') {
+    else if(gramatica->inicial == '\0') {
         printf("\033[31m\nNao ha variavel inicial!\033[0m\n");
         flag = 1;
     }
-
     // Verifica se o vetor dos terminais esta vazio.
-    if(gramatica->terminais.vetor[0] == '\0') {
+    else if(gramatica->terminais.vetor[0] == '\0') {
         printf("\033[31m\nNao ha terminais para serem lidos!\033[0m\n");
         flag = 1;
     }
-
     // Verifica se ha producoes lidas.
-    if(!gramatica->producoes) {
+    else if(!gramatica->producoes) {
         printf("\033[31m\nNao ha producaes para serem lidas!\033[0m\n");
         flag = 1;
     }
-
     return flag;
 }
 
 // Verifica casos de loops simples
 int verifica_loops(Gramatica *gramatica) {
     Producoes *aux = gramatica->producoes;      // Variavel usada para percorrer todas as producoes
-
     char* var = gramatica->variaveis.vetor;     // Variavel usada para pecorrer todos os nao-terminais
-
     int contador = 0, num_derivacoes = 0;       // Contadores para verificacao de erros
 
     // Verifica se nenhuma das producoes e capaz de terminar a cadeia
@@ -59,9 +53,7 @@ int verifica_loops(Gramatica *gramatica) {
      *  isso significa que toda producao sempre vai gerar uma derivacao com ao menos um simbolo nao-terminal
      *  Portanto, a cadeia nunca podera ser encerrada
      */
-
-    if(num_derivacoes == contador)
-        return 1;
+    if(num_derivacoes == contador) return 1;
 
     // Verifica se uma variavel leva apenas a derivacoes dela propria
     for(int i = 0; i <= gramatica->variaveis.controlador; i++) {
@@ -75,32 +67,26 @@ int verifica_loops(Gramatica *gramatica) {
                 num_derivacoes++;
 
                 // Se na producao gerada por esse nao-terminal, ele deriva para ele proprio, incrementa-se o contador
-                if(strchr(aux->producao, var[i]))
-                    contador++;
+                if(strchr(aux->producao, var[i])) contador++;
             }
         }
 
         /*  Caso ambos os contadores coincidam, significa que, para aquele simbolo nao-terminal, todas as producoes
          *  que partem dele derivam nele proprio e, portanto, nunca se podera encerrar a cadeia
          */
-
-        if((num_derivacoes == contador) && num_derivacoes != 0)
-            return 1;
+        if((num_derivacoes == contador) && num_derivacoes != 0) return 1;
     }
-
     return 0;
 }
 
 // Verifica casos de armadilha mais complexas
 int verifica_armadilha(Gramatica *gramatica) {
     int contador = 0, contadorArmadilha = 0;
-
     char resultado[2];
-
-    resultado[0] = '\0';
-
     Producoes *aux;
-
+    
+    resultado[0] = '\0';
+    
     // Incrementa o contador toda vez que lê uma produção e uma variável.
     for(aux = gramatica->producoes; aux; aux = aux->proximo) {
         contador++;
@@ -111,7 +97,6 @@ int verifica_armadilha(Gramatica *gramatica) {
             }
         }
     }
-
     // Se o contador for maior que 20, ignora a verificação de produções armadilhas.
     if(contador > 20) {
         for(aux = gramatica->producoes; aux; aux = aux->proximo)
@@ -134,22 +119,19 @@ int verifica_armadilha(Gramatica *gramatica) {
             else
                 aux->estadoArmadilha = 0;
         }
-
         // Conta quantas produções tem
         contador = 0;
         for(aux = gramatica->producoes; aux; aux = aux->proximo)
             contador++;
 
         // Compara a quantidade de produções com a quantidade de armadilhas, e encerra o programa se forem iguais
-        if(contador == contadorArmadilha)
-            return 1;
+        if(contador == contadorArmadilha) return 1;
         
         if(contador == contadorArmadilha) {
             printf("Producoes invalidas.");
             return 1;
         }
     }
-
     // Retorna '0' se tudo ocorrer bem.
     return 0;
 }
@@ -157,7 +139,6 @@ int verifica_armadilha(Gramatica *gramatica) {
 // Verifica potenciais erros na escrita do arquivo
 int verifica_producoes(Gramatica *gramatica) {
     Producoes *aux = gramatica->producoes;
-
     int controle;
 
     // Verifica se ha uma producao que parte de uma variavel nao declarada
@@ -167,20 +148,15 @@ int verifica_producoes(Gramatica *gramatica) {
         // Para cada producao, verifica se a variavel que a deriva foi declarada
         for(int i = 0; i <= gramatica->variaveis.controlador; i++) {
             // Se a variavel foi declarada, incrementa o controle
-            if(gramatica->variaveis.vetor[i] == aux->variavel)
-                controle++;
+            if(gramatica->variaveis.vetor[i] == aux->variavel) controle++;
         }
-
         // Caso a variavel de origem da derivacao nao coincida com nenhum, ela nao foi declarada
-        if(!controle)
-            return 1;
+        if(!controle) return 1;
     }
-
     // Verifica se em alguma producao ha alguma variavel invalida
     for(aux = gramatica->producoes; aux; aux = aux->proximo) {
         // Se a derivacao for "epsilon", verifica a proxima
-        if(!strcmp(aux->producao, "epsilon"))
-            continue;
+        if(!strcmp(aux->producao, "epsilon")) continue;
 
         // Verifica cada caractere da derivacao atual e checa se todos os caracteres sao validos
         for(int i = 0; i < (int) strlen(aux->producao); i++) {
@@ -191,15 +167,13 @@ int verifica_producoes(Gramatica *gramatica) {
             }
         }
     }
-
     return 0; // Retorna '0' caso nenhum erro tenha sido detectado
 }
 
 // Verifica a existencia de estados armadilha (funcionamento equivalente ao do modo rapido)
 void estado_armadilha(Gramatica *gramatica, char simbolo, char *producao, char *resultado, int iteracoes, int *armadilha) {
     // Se passar o limite de iteracoes, nao permite que a funcao prossiga
-    if(!iteracoes)
-        return;
+    if(!iteracoes) return;
 
     // Flag para indicar se a producao e invalida ('0' para nao, '1' para sim)
     int invalida = 0;
@@ -251,8 +225,7 @@ void estado_armadilha(Gramatica *gramatica, char simbolo, char *producao, char *
                 break;
             }
         }
-        if(invalida)
-            break;
+        if(invalida) break;
     }
 
     if(!invalida) {
