@@ -1,24 +1,23 @@
-# Gerador de Gramáticas Livres de Contexto (GLC)
+# Gerador de Gramáticas Livres de Contexto (GLCs)
 
-Projeto final da disciplina de Linguagens Formais e Computabilidade, do 3º período da Universidade Federal da Paraíba
+## Introdução
+A seguinte implementação foi apresentada como projeto final da disciplina de Linguagens Formais e Computabilidade, na Universidade Federal da Paraíba (UFPB). Escrito na linguagem C, o código tem como objetivo construir cadeias de caracteres válidas dentro de uma [gramática livre de contexto](https://en.wikipedia.org/wiki/Context-free_grammar), passada pelo usuário sob uma formatação específica em arquivo de texto.
 
-### Autores:
+## Funcionalidades
+O código fornece dois modos de produção de cadeias: no **modo detalhado**, o usuário escolhe as derivações possíveis desde o começo até alcançar uma cadeia de caracteres válida; e no **modo rápido**, o algoritmo sempre gera uma nova cadeia válida diretamente, a medida que o usuário solicita.
 
-* [Davi de Lacerda Teixeira](https://github.com/DavideLacerdaT)
-* [João Victor Fernandes da Silveira](https://github.com/oiotave)
+### Divisão
+A implementação possui um fluxo de execução principal, em ```main.c```, na qual se encontram as funções tanto para o modo detalhado quanto para o modo rápido. Além dela, há duas bibliotecas auxiliares:
+1. ```structs.h```: responsável por armazenar estruturas essenciais da gramática e tratá-las;
+2. ```erros.h```: responsável pelo debugging e pela checagem de erros na gramática passada.
 
-Seu objetivo é executar a geração de cadeias em uma gramática livre de contexto, fornecendo dois modos de produção:
+### Execução
+Para a compilação do código, recomenda-se o uso de GCC e também o seguinte comando de compilação:
 
-* Detalhado: usuário escolhe as derivações até a finalização da cadeia
-* Rápido: gera sempre uma cadeia toda vez que o usuário solicita
+```gcc -o app structs.c erros.c main.c```
 
-Além da função principal "main", o projeto possui duas bibliotecas auxiliares:
+## Autores
+O seguinte projeto foi desenvolvido por [Davi de Lacerda Teixeira](https://github.com/DavideLacerdaT) e por [João Victor Fernandes da Silveira](https://github.com/oiotave).
 
-* structs.h: responsável por armazenar estruturas essenciais da gramática e tratá-las
-* erros.h: responsável pela checagem de erros na gramática passada
-
-Para a compilação do código, sobretudo se for por meio do compilador GCC, recomenda-se o seguinte comando:
-
-    gcc -o app structs.c erros.c main.c
-
-O projeto contém uma pasta com duas gramáticas de teste em "texto.txt" e "texto2.txt"
+## Notas
+O projeto contém uma pasta com duas gramáticas de teste em ```texto.txt``` e ```texto2.txt```, que podem ser usados para melhor compreensão da formatação exigida e do próprio funcionamento do código.
