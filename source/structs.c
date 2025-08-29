@@ -24,7 +24,6 @@ void adicionar_producao(Gramatica *gramatica, char *linha) {
         printf("\033[31m\nErro na alocacao de memoria!\033[0m\n");
         return;
     }
-
     // Le a linha no formato: "S: producao"
     sscanf(linha, "%c: %[^\n]", &resultado->variavel, resultado->producao);
 
@@ -32,14 +31,11 @@ void adicionar_producao(Gramatica *gramatica, char *linha) {
     resultado->proximo = 0;
 
     // Adiciona a producao como novo ultimo elemento na lista encadeada
-    if(!gramatica->producoes)
-        gramatica->producoes = resultado;
+    if(!gramatica->producoes) gramatica->producoes = resultado;
 
     else {
         Producoes *aux = gramatica->producoes;
-        while(aux->proximo != 0)
-            aux = aux->proximo;
-
+        while(aux->proximo != 0) aux = aux->proximo;
         aux->proximo = resultado;
     }
 }
@@ -47,14 +43,13 @@ void adicionar_producao(Gramatica *gramatica, char *linha) {
 // Libera a memoria alocada para finalizar o programa
 void limpar_producao(Gramatica *gramatica) {
     Producoes *aux, *temp;
-
     aux = gramatica->producoes;
 
     // Libera o espaco de memoria alocado para guardar as producoes
     while(aux) {
         temp = aux;
         aux = aux->proximo;
-
         free(temp);
     }
 }
+
