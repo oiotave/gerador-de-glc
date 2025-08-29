@@ -9,24 +9,17 @@
 // Biblioteca com rotinas para checagem de erros
 #include "erros.h"
 
-
 // Flag usada na recursao do modo rapido para indicar cadeias finalizadas
 int flag = 0;
 
-
 // Funcoes principais de execucao dos modos
-int ler_arquivo(Gramatica*);
-
+int  ler_arquivo(Gramatica*);
 void modo_rapido(Gramatica*, char, char*, char*, char*, int);
-
 void modo_detalhado(Gramatica*);
-
 
 // Funcoes visuais auxiliares
 void clear();
-
 void menu_abertura();
-
 void avisos();
 
 int main(void) {
@@ -55,14 +48,12 @@ int main(void) {
             clear();
             return 0;
         }
-
         // Caso haja algum erro, limpa a memoria alocada e pede nova leitura
         limpar_producao(&gramatica);
         aux = ler_arquivo(&gramatica);
 
         // Sai do loop apenas quando a leitura e bem-sucedida
-        if(!aux)
-            break;
+        if(!aux) break;
     }
 
     // Verifica se ha algum erro no arquivo passado
@@ -70,21 +61,18 @@ int main(void) {
         limpar_producao(&gramatica);
         return 0;
     }
-
     // Verifica se ha algum erro de sintaxe
     if(verifica_producoes(&gramatica)) {
         printf("\033[31m\nExiste algum erro de sintaxe nas producoes!\033[0m\n");
         limpar_producao(&gramatica);
         return 0;
     }
-
     // Verifica se a gramatica passada pode gerar loops
     if(verifica_loops(&gramatica) || verifica_armadilha(&gramatica)) {
         printf("\033[31m\nA gramatica passada potencialmente gera loops!\033[0m\n");
         limpar_producao(&gramatica);
         return 0;
     }
-
     // Permite ao usuario escolher como proceder no codigo
     do {
         printf("\033[33m\n(1) - Modo rapido\033[0m\n");
@@ -128,7 +116,8 @@ int main(void) {
                 printf("\033[31m\nOpcao nao suportada!\033[0m\n\n");
                 break;
         }
-    } while(opcao);
+    }
+    while(opcao);
 
     return 0;
 }
@@ -171,20 +160,14 @@ int ler_arquivo(Gramatica *gramatica) {
                     printf("\nOpcao nao encontrada. Tente novamente: ");
                     fgets(linha, 1000, stdin);
                 }
-                else
-                    break;
+                else break;
             }
-
-            if(!opt)
-                return -1;
+            if(!opt) return -1;
 
             // Limpa o buffer, antecipando outra leitura de arquivo
-            else
-                getchar();
-
+            else getchar();
         }
-        else
-            break;
+        else break;
     }
 
     // Le cada linha nova do arquivo, enquanto houver
@@ -563,3 +546,4 @@ void avisos() {
 
     printf("\033[33m\nGrupo: Davi de Lacerda Teixeira (20230012251) e Joao Victor Fernandes da Silveira (20230012298) \n\033[0m");
 }
+
