@@ -190,7 +190,7 @@ void estado_armadilha(Gramatica *gramatica, char simbolo, char *producao, char *
 
     aux = gramatica->producoes;
     while(aux) {
-        if (aux->variavel == simbolo) {
+        if(aux->variavel == simbolo) {
             if((strcmp(aux->producao, "epsilon") == 0) && (strcmp(copiaProducao, "epsilon") == 0)) {
                 (*armadilha) = 0;
                 return;
@@ -241,3 +241,4 @@ void estado_armadilha(Gramatica *gramatica, char simbolo, char *producao, char *
         aux = aux->proximo;
     }
 }
+
