@@ -2,15 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
-// Biblioteca para armazenar as estruturas da gramatica
 #include "structs.h"
-
-// Biblioteca com rotinas para checagem de erros
 #include "erros.h"
 
-// Flag usada na recursao do modo rapido para indicar cadeias finalizadas
-int flag = 0;
+int flag = 0; // Flag usada na recursao do modo rapido para indicar cadeias finalizadas
 
 // Funcoes principais de execucao dos modos
 int  ler_arquivo(Gramatica*);
@@ -34,16 +29,13 @@ int main(void) {
     // Inicializa a gramatica do usuario
     Gramatica gramatica;
     construtor(&gramatica);
-
     menu_abertura();
     avisos();
 
-    // Chama a funcao de leitura do arquivo e recebe o retorno ('0' caso nao haja erros, '1' caso haja)
     int aux = ler_arquivo(&gramatica);
 
     // Loop de leitura do arquivo passado pelo usuario
     while(aux) {
-        // Se usuario optou por nao continuar, encerra o programa
         if(aux == -1) {
             clear();
             return 0;
@@ -51,23 +43,20 @@ int main(void) {
         // Caso haja algum erro, limpa a memoria alocada e pede nova leitura
         limpar_producao(&gramatica);
         aux = ler_arquivo(&gramatica);
-
-        // Sai do loop apenas quando a leitura e bem-sucedida
+        
         if(!aux) break;
     }
 
-    // Verifica se ha algum erro no arquivo passado
+    // Sequencia de verificacao de erros
     if(verifica_arquivo(&gramatica)) {
         limpar_producao(&gramatica);
         return 0;
     }
-    // Verifica se ha algum erro de sintaxe
     if(verifica_producoes(&gramatica)) {
         printf("\033[31m\nExiste algum erro de sintaxe nas producoes!\033[0m\n");
         limpar_producao(&gramatica);
         return 0;
     }
-    // Verifica se a gramatica passada pode gerar loops
     if(verifica_loops(&gramatica) || verifica_armadilha(&gramatica)) {
         printf("\033[31m\nA gramatica passada potencialmente gera loops!\033[0m\n");
         limpar_producao(&gramatica);
@@ -118,7 +107,6 @@ int main(void) {
         }
     }
     while(opcao);
-
     return 0;
 }
 
@@ -126,12 +114,7 @@ int ler_arquivo(Gramatica *gramatica) {
     // Flag para indicar se o programa deve comecar a ler as producoes
     int modoLerProducoes = 0;
 
-    // Armazena informacoes de cada linha do arquivo
-    char linha[100];
-
-    // Variavel para guardar o diretorio do arquivo
-    char caminho_arquivo[1000];
-
+    char linha[100], caminho_arquivo[1000];
     FILE *arquivo;
 
     // Loop de leitura do arquivo
@@ -146,7 +129,6 @@ int ler_arquivo(Gramatica *gramatica) {
 
         // Repete a leitura caso o diretorio passado tenha algum problema
         if(!arquivo) {
-            // Determina se o usuario quer ou nao prosseguir com outra leitura
             int opt;
 
             printf("\033[31m\nArquivo nao encontrado ou com problemas!\033[0m\n");
@@ -163,22 +145,13 @@ int ler_arquivo(Gramatica *gramatica) {
                 else break;
             }
             if(!opt) return -1;
-
-            // Limpa o buffer, antecipando outra leitura de arquivo
             else getchar();
         }
         else break;
     }
-
-    // Le cada linha nova do arquivo, enquanto houver
     while(fgets(linha, 100, arquivo)) {
-
-        // Remove o '\n' por precaucao.
         linha[strcspn(linha, "\n")] = 0;
-
-        // Ignora linhas vazias
-        if(linha[0] == '\0')
-            continue;
+        if(linha[0] == '\0') continue;
 
         // Le as variaveis da gramatica
         if(strncmp(linha, "variaveis:", 10) == 0) {
@@ -195,10 +168,8 @@ int ler_arquivo(Gramatica *gramatica) {
                 }
             }
         }
-
         // Le a variavel inicial da gramatica
-        else if(strncmp(linha, "inicial:", 8) == 0)
-            gramatica->inicial = linha[8];
+        else if(strncmp(linha, "inicial:", 8) == 0) gramatica->inicial = linha[8];
 
         // Le os terminais da gramatica
         else if(strncmp(linha, "terminais:", 10) == 0) {
@@ -217,20 +188,16 @@ int ler_arquivo(Gramatica *gramatica) {
         }
 
         // Ativa o modo que le as producoes, a partir da proxima linha
-        else if(strncmp(linha, "producoes", 9) == 0)
-            modoLerProducoes = 1;
+        else if(strncmp(linha, "producoes", 9) == 0) modoLerProducoes = 1;
 
         // Recusa o arquivo se uma producao esta em outro formato
         else if((modoLerProducoes == 1) && (linha[1] != ':')) {
             printf("\033[31m\nO arquivo possui producao invalida!\033[0m\n");
             return 1;
         }
-
         // Le as producoes ate o final do arquivo
-        else if(modoLerProducoes)
-            adicionar_producao(gramatica, linha);
+        else if(modoLerProducoes) adicionar_producao(gramatica, linha);
     }
-
     fclose(arquivo);
     return 0;
 }
@@ -246,20 +213,14 @@ void modo_detalhado(Gramatica *gramatica) {
     char resultado[200];    // Armazena a cadeia depois da ultima derivacao
     char string[1000];      // Armazena todo o processo de derivacao, do inicial ate a cadeia final
 
-    // Inicializa as strings como vazias
     resultado[0] = '\0';
     string[0] = '\0';
-
-    // Comeca pela variavel inicial
     simbolo = gramatica->inicial;
 
-    // Comeca montando com a variavel inicial.
-    sprintf(string, "%c", simbolo);
-
-    // Auxiliar para percorrer todas as producoes
+    sprintf(string, "%c", simbolo); // Comeca montando com a variavel inicial.
     Producoes *aux;
 
-    // Looping interativo de montagem. Termina se for colocado um epsilon ou uma producao que nao leva a nada.
+    // Loop interativo de montagem. Termina se for colocado um epsilon ou uma producao que nao leva a nada.
     do {
         // Reinicia aux para pegar todas as producoes
         aux = gramatica->producoes;
@@ -272,19 +233,16 @@ void modo_detalhado(Gramatica *gramatica) {
             if(aux->variavel == simbolo) {
                 printf("\033[33m%c: %s\033[0m", aux->variavel, aux->producao);
 
-                if(aux->estadoArmadilha)
-                    printf(" (armadilha)\n\n");
-                else
-                    printf("\n\n");
+                if(aux->estadoArmadilha) printf(" (armadilha)\n\n");
+                
+                else printf("\n\n");
             }
             aux = aux->proximo;
         }
-
         // Deixa ao usuario escolher uma producao
         printf("Digite uma producao: ");
         scanf("%s", escolha);
         printf("\n");
-
         aux = gramatica->producoes;
 
         while(aux) {
@@ -296,10 +254,8 @@ void modo_detalhado(Gramatica *gramatica) {
                     return;
                 }
             }
-
             aux = aux->proximo;
         }
-
         // Verifica se a string e valida e seleciona o tratamento correto.
         aux = gramatica->producoes;
         while(aux) {
@@ -315,12 +271,12 @@ void modo_detalhado(Gramatica *gramatica) {
                             // Percorre ate achar o caractere que corresponde ao simbolo em questao
                             if((resultado[i] == simbolo)) {
                                 for(int j = i; j < (int) strlen(resultado); j++)
-                                    // Move tudo a direita desse simbolo uma posicao a esquerda, sumindo com o simbolo
-                                    resultado[j] = resultado[j + 1];
+                                    resultado[j] = resultado[j + 1]; // Move tudo a direita desse simbolo uma posicao a esquerda, sumindo com o simbolo
+                                
                                 break;
                             }
                         }
-                }
+                    }
                     break;
                 }
                 // Caso a producao da variavel seja alguma outra, faz outro tratamento
@@ -328,8 +284,7 @@ void modo_detalhado(Gramatica *gramatica) {
                     valida = 1;
 
                     // Se essa for a primeira iteracao, apenas copia a derivacao escolhida no resultado
-                    if(resultado[0] == '\0')
-                        strcpy(resultado, escolha);
+                    if(resultado[0] == '\0') strcpy(resultado, escolha);
 
                     // Senao, substitui a variavel pela derivacao no resultado
                     else {
@@ -341,10 +296,10 @@ void modo_detalhado(Gramatica *gramatica) {
                                     for(int j = (int) strlen(resultado); j >= i; j--)
                                         resultado[j + ((int) strlen(escolha) - 1)] = resultado[j];
                                 }
-
                                 // Preenche o espaco no meio com os caracteres da derivacao escolhida pelo usuario
                                 for(int j = 0; j < (int) strlen(escolha); j++)
                                     resultado[i + j] = escolha[j];
+                                
                                 break;
                             }
                         }
@@ -354,32 +309,23 @@ void modo_detalhado(Gramatica *gramatica) {
             }
             aux = aux->proximo;
         }
-
        // Se a escolha foi invalida, permite que o usuario tente novamente ou volte ao menu
         if (valida == 0) {
             printf("\033[31m\nProducao escolhida invalida!\033[0m\n");
             printf("\033[33m\n(0) - Voltar ao Menu\033[0m\n");
             printf("\033[33m\n(1) - Tentar de novo\033[0m\n\n");
             printf("Digite uma opcao: ");
-
             scanf("%d", &opcao);
 
-            if(!opcao)
-                return;
-
-            else
-                variaveis = 1;
-
+            if(!opcao) return;
+            else variaveis = 1;
         }
         else {
             // Monta a string completa
             strcat(string, " -> ");
             strcat(string, resultado);
-
-            // Printa a string completa ate aquele ponto
             printf("\033[32m%s\033[m\n", string);
 
-            // Reinicia a variavel. Termina o codigo se ela variaveis como um zero, e continua, se o contrario
             variaveis = 0;
 
             // Verifica se ainda tem variaveis para serem derivadas e guarda elas em um vetor
@@ -392,28 +338,20 @@ void modo_detalhado(Gramatica *gramatica) {
                         break;
                     }
                 }
-                if(variaveis)
-                    break;
+                if(variaveis) break;
             }
         }
     }
-        while(variaveis >= 1); // Repete o laco enquanto a flag 'variaveis' for verdadeira
-
-        printf("\033[32m\nCadeia formada com sucesso!\033[0m\n\n");
+    while(variaveis >= 1); // Repete o laco enquanto a flag 'variaveis' for verdadeira
+    
+    printf("\033[32m\nCadeia formada com sucesso!\033[0m\n\n");
 }
 
 void modo_rapido(Gramatica *gramatica, char simbolo, char *producao, char *resultado, char *string, int iteracoes) {
     // Se a flag estiver ativada, retorna todas as chamadas
-    if(flag)
-        return;
+    if(flag || iteracoes <= 0) return;
 
-    if(iteracoes <= 0)
-        return;
-
-    // Declara as variaveis inteiras.
     int invalida = 0;
-
-    // Declara o auxiliar de producoes.
     Producoes *aux;
 
     char copiaProducao[20], copiaResultado[200], copiaString[1000];
@@ -444,8 +382,8 @@ void modo_rapido(Gramatica *gramatica, char simbolo, char *producao, char *resul
 
             // Se for outra, substitui a variavel pela producao e arruma a string
             if((strcmp(aux->producao, copiaProducao) == 0)) {
-                if (copiaResultado[0] == '\0')
-                    strcpy(copiaResultado, copiaProducao);
+                if(copiaResultado[0] == '\0') strcpy(copiaResultado, copiaProducao);
+                
                 else {
                     for(int i = 0; i < (int)strlen(copiaResultado); i++) {
                         if((copiaResultado[i] == simbolo)) {
@@ -456,6 +394,7 @@ void modo_rapido(Gramatica *gramatica, char simbolo, char *producao, char *resul
 
                             for(int j = 0; j < (int)strlen(copiaProducao); j++)
                                 copiaResultado[i + j] = copiaProducao[j];
+                            
                             break;
                         }
                     }
@@ -465,8 +404,6 @@ void modo_rapido(Gramatica *gramatica, char simbolo, char *producao, char *resul
         }
         aux = aux->proximo;
     }
-
-    // Monta a string completa
     strcat(copiaString, " -> ");
     strcat(copiaString, copiaResultado);
 
@@ -479,10 +416,8 @@ void modo_rapido(Gramatica *gramatica, char simbolo, char *producao, char *resul
                 break;
             }
         }
-        if(invalida)
-            break;
+        if(invalida) break;
     }
-
     // Se a producao for valida, printa uma derivacao possivel
     if(!invalida) {
         int opcao;
@@ -493,8 +428,7 @@ void modo_rapido(Gramatica *gramatica, char simbolo, char *producao, char *resul
         printf("\n");
 
         // Se o usuario quiser uma nova cadeia, chama mais uma recursao
-        if(opcao)
-            return;
+        if(opcao) return;
 
         // Senao, muda o valor de flag para 1, encerrando a recursao
         else if(!opcao) {
@@ -507,8 +441,7 @@ void modo_rapido(Gramatica *gramatica, char simbolo, char *producao, char *resul
     aux = gramatica->producoes;
     while(aux) {
         if(aux->variavel == simbolo) {
-            if(aux->estadoArmadilha)
-                return;
+            if(aux->estadoArmadilha) return;
             modo_rapido(gramatica, simbolo, aux->producao, copiaResultado, copiaString, iteracoes - 1);
         }
         aux = aux->proximo;
@@ -546,4 +479,5 @@ void avisos() {
 
     printf("\033[33m\nGrupo: Davi de Lacerda Teixeira (20230012251) e Joao Victor Fernandes da Silveira (20230012298) \n\033[0m");
 }
+
 
