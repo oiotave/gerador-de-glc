@@ -24,7 +24,11 @@ A: epsilon
 ...
 ```
 
-Note que só é permitido a utilização de símbolos terminais e não-terminais com um único caractere, e que a palavra reservada “epsilon” deve ser interpretada como cadeia vazia. Além disso, é obrigatória a utilização do formato de arquivo especificado acima. O gerador deve possuir 2 modos de funcionamento: **rápido** e **detalhado**.
+Note que só é permitido a utilização de símbolos terminais e não-terminais com um único caractere, e que a palavra reservada “epsilon” deve ser interpretada como cadeia vazia. Além disso, é obrigatória a utilização do formato de arquivo especificado acima.
+
+## Modos de funcionamento
+
+O gerador deve possuir 2 modos de funcionamento: **rápido** e **detalhado**.
 
 ### Modo rápido
 
@@ -60,4 +64,5 @@ gcc structs.c erros.c main.c -o app
 ```
 
 **Observação**: O projeto contém uma pasta com duas gramáticas de teste em "texto.txt" e "texto2.txt"
+
 
