@@ -1,11 +1,10 @@
 # Gerador de cadeias para Gramáticas Livres de Contexto
 
-A seguinte implementação foi apresentada como projeto final da disciplina de Linguagens Formais e Computabilidade, na Universidade Federal da Paraíba. Seu objetivo é criar uma rotina capaz de gerar cadeias binárias de uma [gramática formal](https://en.wikipedia.org/wiki/Context-free_grammar) genérica passada em arquivo de texto pelo usuário.
+A seguinte implementação foi apresentada como projeto final da disciplina de Linguagens Formais e Computabilidade, na Universidade Federal da Paraíba. Seu objetivo é criar uma rotina capaz de gerar cadeias binárias de uma [gramática livre de contexto](https://en.wikipedia.org/wiki/Context-free_grammar) genérica passada em arquivo de texto pelo usuário.
 
 ## Autores
 
-* [Davi de Lacerda Teixeira](https://github.com/DavideLacerdaT)
-* [João Victor Fernandes da Silveira](https://github.com/oiotave)
+Esse projeto foi desenvolvido por [Davi de Lacerda Teixeira](https://github.com/DavideLacerdaT) e [João Victor Fernandes da Silveira](https://github.com/oiotave)
 
 ## Especificação
 
@@ -64,5 +63,6 @@ gcc structs.c erros.c main.c -o app
 ```
 
 **Observação**: O projeto contém uma pasta com duas gramáticas de teste em "texto.txt" e "texto2.txt"
+
 
 
